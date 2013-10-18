@@ -1,53 +1,32 @@
 package sistemasdistribuidos.chat;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.net.ServerSocket;
-import java.net.Socket;
 
 public class Servidor {
 	
 	public static void main(String args[]) {
 		
-		ServerSocket echoServer = null;		
-		Socket clientSocket = null; 
-
-		try {			
-			
+		ServerSocket server = null;
+				
+		try {						
 			int porta = lePorta();			
-			echoServer = new ServerSocket(porta); // socket - bind			
-			System.out.println("Servidor carregado na porta 7000");
+		
+			server = new ServerSocket(porta); // socket - bind			
 			
-			while (!echoServer.isClosed()) {
-				try {
-					System.out.println("Aguardando conexao");
-					clientSocket = echoServer.accept(); // listen - accept
-					
-					DataInputStream is = new DataInputStream(clientSocket.getInputStream());									
-					PrintStream os = new PrintStream(clientSocket.getOutputStream());
-					
-					System.out.println("Cliente conectado: " + clientSocket.isConnected());
-					os.println("Servidor responde: Conexao efetuada com o servidor");
-					
-					while(!echoServer.isClosed() && clientSocket.isBound()) {
-						String line = is.readLine(); // recv
-						System.out.println("Cliente enviou: " + line);
-						os.println(line.toUpperCase());
-						
-						if("FIM".equals( line.trim().toUpperCase())){
-							os.println("FIM");							
-							System.out.println("Fechando conexão.");							
-							echoServer.close();
-						}						
-					}
-					
-				} catch (IOException e) {
-					System.out.println(e);
-					echoServer.close();
-				}
+			System.out.println("Servidor carregado na porta " + server.getLocalPort());
+			
+			while(true){
+			
+				ChatCliente cliente = new ChatCliente(server.accept());
+				
+			
 			}
+			
+			
+			
+			cliente.envia("Servidor no endereco " + server.getLocalSocketAddress() + " porta " + server.getLocalPort() + "\n");
+			cliente.iniciaThreads();		
+			
 			
 		} catch (IOException e) {
 			System.out.println(e);
@@ -55,7 +34,6 @@ public class Servidor {
 	}
 
 	private static int lePorta() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 7000;
 	}
 }
