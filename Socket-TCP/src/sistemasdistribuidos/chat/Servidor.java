@@ -1,61 +1,46 @@
 package sistemasdistribuidos.chat;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Servidor {
 	
 	public static void main(String args[]) {
 		
 		ServerSocket echoServer = null;		
-		Socket clientSocket = null; 
+		List<ServidorEcho> clientes = new ArrayList<>();
 
 		try {			
-			
-			int porta = lePorta();			
+			int conexoesRealizadas = 0;
+			int porta = 7000;			
 			echoServer = new ServerSocket(porta); // socket - bind			
-			System.out.println("Servidor carregado na porta 7000");
+			
+			System.out.println("Servidor carregado na porta " + porta);
 			
 			while (!echoServer.isClosed()) {
 				try {
+					
 					System.out.println("Aguardando conexao");
-					clientSocket = echoServer.accept(); // listen - accept
 					
-					DataInputStream is = new DataInputStream(clientSocket.getInputStream());									
-					PrintStream os = new PrintStream(clientSocket.getOutputStream());
+					Socket cliente = echoServer.accept(); // listen - accept
 					
-					System.out.println("Cliente conectado: " + clientSocket.isConnected());
-					os.println("Servidor responde: Conexao efetuada com o servidor");
+					System.out.println("Cliente " + conexoesRealizadas + " conectou.");
 					
-					while(!echoServer.isClosed() && clientSocket.isBound()) {
-						String line = is.readLine(); // recv
-						System.out.println("Cliente enviou: " + line);
-						os.println(line.toUpperCase());
-						
-						if("FIM".equals( line.trim().toUpperCase())){
-							os.println("FIM");							
-							System.out.println("Fechando conexão.");							
-							echoServer.close();
-						}						
-					}
+					ServidorEcho conCliente = new ServidorEcho(cliente, conexoesRealizadas);
+					conCliente.start();					
+					clientes.add(conCliente);					
+					conexoesRealizadas++;
 					
 				} catch (IOException e) {
 					System.out.println(e);
 					echoServer.close();
 				}
-			}
-			
+			}			
 		} catch (IOException e) {
 			System.out.println(e);
 		}
 	}
 
-	private static int lePorta() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }

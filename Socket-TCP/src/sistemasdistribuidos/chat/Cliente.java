@@ -12,7 +12,7 @@ public class Cliente {
     
 	public static void main(String[] args) throws IOException {
    	
-		BufferedReader entrada = new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader entrada = new BufferedReader(new InputStreamReader(System.in));		
 		
 		Socket cliente = null;
         BufferedReader entradaCliente = null;
@@ -23,26 +23,26 @@ public class Cliente {
             cliente = new Socket("127.0.0.1",7000);  // socket - bind
             
             entradaCliente = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
-        	saidaCliente = new BufferedWriter(new OutputStreamWriter(cliente.getOutputStream()));
-               	
+        	saidaCliente = new BufferedWriter(new OutputStreamWriter(cliente.getOutputStream()));               	
         	System.out.println("Conectado na porta " + cliente.getLocalPort());        	
         	System.out.println(entradaCliente.readLine());
         	
             while (!cliente.isClosed()) {
             	
                 System.out.print("Digite: ");
-                String enviar = entrada.readLine();                
-                
+                String enviar = entrada.readLine(); 
                 saidaCliente.write(enviar + "\n");                
                 saidaCliente.flush();
                 
-                if (enviar.equals("fim")) {
+                String resposta = entradaCliente.readLine();
+                
+                if (resposta.equals("fim")) {
                     if("FIM".equals(entradaCliente.readLine())){
                     	System.out.println("Servidor desconectou.");
                     	cliente.close();
                     }
                 }else{
-                	System.out.println("Servidor retornou: " + entradaCliente.readLine()); // listen
+                	System.out.println("Servidor retornou: " + resposta); // listen
                 }               
             }
         } catch (ConnectException ex){    
