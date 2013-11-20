@@ -3,34 +3,34 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Servidor {
 	
 	public static void main(String args[]) {
 		
 		ServerSocket echoServer = null;		
-		List<ServidorEcho> clientes = new ArrayList<>();
+		Map<Integer, ServidorEcho> clientesConectados = new HashMap<>();
 
 		try {			
 			int conexoesRealizadas = 0;
 			int porta = 7000;			
-			echoServer = new ServerSocket(porta); // socket - bind			
-			
+			echoServer = new ServerSocket(porta); // socket - bind
 			System.out.println("Servidor carregado na porta " + porta);
 			
 			while (!echoServer.isClosed()) {
 				try {
 					
-					System.out.println("Aguardando conexao");
+					System.out.println("Aguardando conexao");					
+					Socket cliente = echoServer.accept(); // listen - accept					
+					System.out.println("Cliente " + conexoesRealizadas + " conectou. Clientes conectados " + clientesConectados.size());					
+					ServidorEcho conCliente = new ServidorEcho(cliente, clientesConectados, conexoesRealizadas);
 					
-					Socket cliente = echoServer.accept(); // listen - accept
+					clientesConectados.put(conexoesRealizadas, conCliente);
+					conCliente.start();
 					
-					System.out.println("Cliente " + conexoesRealizadas + " conectou.");
-					
-					ServidorEcho conCliente = new ServidorEcho(cliente, conexoesRealizadas);
-					conCliente.start();					
-					clientes.add(conCliente);					
 					conexoesRealizadas++;
 					
 				} catch (IOException e) {

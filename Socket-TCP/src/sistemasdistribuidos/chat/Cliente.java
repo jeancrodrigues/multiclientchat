@@ -13,38 +13,31 @@ public class Cliente {
 	public static void main(String[] args) throws IOException {
    	
 		BufferedReader entrada = new BufferedReader(new InputStreamReader(System.in));		
-		
-		Socket cliente = null;
-        BufferedReader entradaCliente = null;
+		Socket socket = null;
     	BufferedWriter saidaCliente = null;
-
+    	ThreadEntrada entradaCliente;
+    	
         try {
         	
-            cliente = new Socket("127.0.0.1",7000);  // socket - bind
+            socket = new Socket("127.0.0.1",7000);  // socket - bind            
+            entradaCliente = new ThreadEntrada(socket.getInputStream());
+            entradaCliente.start();
             
-            entradaCliente = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
-        	saidaCliente = new BufferedWriter(new OutputStreamWriter(cliente.getOutputStream()));               	
-        	System.out.println("Conectado na porta " + cliente.getLocalPort());        	
-        	System.out.println(entradaCliente.readLine());
+        	saidaCliente = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));               	
+        	System.out.println("Conectado na porta " + socket.getLocalPort());        	
         	
-            while (!cliente.isClosed()) {
-            	
+            while (!socket.isClosed()) {            	
                 System.out.print("Digite: ");
                 String enviar = entrada.readLine(); 
                 saidaCliente.write(enviar + "\n");                
-                saidaCliente.flush();
-                
-                String resposta = entradaCliente.readLine();
-                
-                if (resposta.equals("fim")) {
-                    if("FIM".equals(entradaCliente.readLine())){
-                    	System.out.println("Servidor desconectou.");
-                    	cliente.close();
-                    }
-                }else{
-                	System.out.println("Servidor retornou: " + resposta); // listen
+                saidaCliente.flush();                
+                if ("FIM".equals( enviar.toUpperCase())) {
+                	entradaCliente.desconectar();                	
+                    socket.close();
+                    System.out.println("Saindo do chat.");
                 }               
             }
+            
         } catch (ConnectException ex){    
         	ex.printStackTrace();
         } catch (UnknownHostException ex) {
