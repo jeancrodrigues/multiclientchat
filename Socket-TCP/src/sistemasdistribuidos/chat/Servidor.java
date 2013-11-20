@@ -2,9 +2,7 @@ package sistemasdistribuidos.chat;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Servidor {
@@ -25,9 +23,8 @@ public class Servidor {
 					
 					System.out.println("Aguardando conexao");					
 					Socket cliente = echoServer.accept(); // listen - accept					
-					System.out.println("Cliente " + conexoesRealizadas + " conectou. Clientes conectados " + clientesConectados.size());					
 					ServidorEcho conCliente = new ServidorEcho(cliente, clientesConectados, conexoesRealizadas);
-					
+					System.out.println("Cliente " + conCliente.getNome() + " conectou. Clientes conectados " + clientesConectados.size());
 					clientesConectados.put(conexoesRealizadas, conCliente);
 					conCliente.start();
 					

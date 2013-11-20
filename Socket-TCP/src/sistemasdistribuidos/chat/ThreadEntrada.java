@@ -27,7 +27,6 @@ public class ThreadEntrada extends Thread{
 		try {
 			join(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
