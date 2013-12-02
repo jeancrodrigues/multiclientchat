@@ -1,3 +1,10 @@
+/*
+ * Autor: Jean Carlos Rodrigues
+ * 
+ * Classe responsavel por gerenciar um cliente no servidor
+ * Para cada cliente conectado uma instancia dessa classe será criada
+ * 
+ */
 package sistemasdistribuidos.chat;
 
 import java.io.BufferedReader;

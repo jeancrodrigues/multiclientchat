@@ -1,3 +1,6 @@
+/*
+ * Autor: Jean Carlos Rodrigues
+ */
 package sistemasdistribuidos.chat;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,7 +19,10 @@ public class Cliente {
 	private BufferedWriter saidaCliente;
 	private ThreadEntrada entradaCliente;
     
-	public Cliente(String endereco, int porta, String nomeUsuario){
+	public Cliente(String endereco, int porta, String nomeUsuario) throws IllegalArgumentException{		
+		if(nomeUsuario == null || "".equals(nomeUsuario.trim())){
+			throw new IllegalArgumentException("o nome do usuario nao pode ser vazio.");
+		}		
 		this.nomeUsuario = nomeUsuario;
 		try {
 			conectar(endereco, porta);
@@ -29,14 +35,14 @@ public class Cliente {
 		}
 	}
 	
-	private void conectar(String endereco, int porta) throws Exception{		
+	private void conectar(String endereco, int porta) throws Exception{
 		try {
 			socket = new Socket(endereco,porta);
 			System.out.println("o/ Conectado em " + endereco + " \\o/");
 		} catch (UnknownHostException e) {
 			throw new Exception("Erro: O endereço de "+ endereco +" não pode ser determinado");
 		} catch (IOException e) {
-			throw new Exception("Ops, alguma coisa deu errado ao conectar.");
+			throw new Exception("Ops, alguma coisa deu errada ao conectar.");
 		}	
 	}
 	
@@ -89,15 +95,23 @@ public class Cliente {
 		try {					
 			System.out.println("Bem vindo ao chat, digite o servidor em que deseja conectar: ");
 			servidor = reader.readLine().trim();
-			System.out.println("Digite o seu nome de usuário: ");
-			nome = reader.readLine().trim();
-			Cliente cliente = new Cliente(servidor, porta, nome);
 			
+			System.out.println("Digite o numero da porta para se conectar:");
+			String portaDigitada = reader.readLine().trim();			
+			porta = Integer.valueOf(portaDigitada);		
+			
+			System.out.println("Digite o seu nome de usuário: ");		
+			nome = reader.readLine().trim();		
+			
+			Cliente cliente = new Cliente(servidor, porta, nome);			
 			cliente.chat();
 			
-			System.out.println("Você saiu do chat.");			
+			System.out.println("Você saiu do chat.");
+		
 		} catch (IOException e) {
 			e.printStackTrace();
-		}	
+		} catch (NumberFormatException e){			
+			System.out.println("Numero da porta digitada incorretamente.\nSaindo.");
+		}
 	}
 }

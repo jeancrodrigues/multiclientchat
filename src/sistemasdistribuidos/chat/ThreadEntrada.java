@@ -1,3 +1,9 @@
+/*
+ * Autor: Jean Carlos Rodrigues
+ * 
+ * Classe responsavel por gerenciar as entradas do teclado do cliente
+ * Necessaria para o cliente poder escutar no socket e no teclado ao mesmo tempo 
+ */
 package sistemasdistribuidos.chat;
 
 import java.io.BufferedReader;
